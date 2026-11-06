@@ -21,7 +21,7 @@ description: 派卡 + 验收。把任务总表（默认 docs/TASK.md）里可开
 | 提交前检查 | 子代理收尾、主会话验收 | 无，验收时提醒用户补上 |
 | 验收红线 | 第 4 步审 diff 的项目专属清单 | 无 |
 | 提交策略 | 第 5 步：`直接提交` 或 `先问` | `先问` |
-| 写卡模型 | 第 0.1 节 | Claude Code 用 `sonnet`；其他工具继承主会话 |
+| 写卡模型（可选） | 第 0.1 节，只影响 Claude Code | `sonnet` |
 
 没有这一节：用缺省值继续，汇报里提醒用户「可以用 `project-init` 补上任务配置」。
 
@@ -34,11 +34,24 @@ description: 派卡 + 验收。把任务总表（默认 docs/TASK.md）里可开
 | 工具 | 怎么派 | 怎么返工 |
 |---|---|---|
 | Claude Code | Agent 工具，`subagent_type: "general-purpose"`、`model: <写卡模型>`，description 写「做 <卡号> <卡片名>」。子代理在后台跑，等完成通知，不要轮询，不要提前猜结果 | SendMessage 发回同一个子代理 |
-| Codex（CLI / App / IDE） | 子代理默认开启。有项目自定义代理 `card-worker`（`.codex/agents/card-worker.toml`）就派它，没有就派内置的 `worker` 角色；把第 3 步的 prompt 交给它。多张卡并行就一次派多个，等全部结果回来再验收 | 让 Codex 把问题清单发给同一个子代理线程（CLI 里用 `/subagents` 查看）；线程已关闭就新派一个，prompt 用第 3 步模板 + 问题清单 + 「在现有改动基础上修，不要推倒重来」 |
+| Codex（CLI / App / IDE） | 子代理默认开启。派自定义代理 `card_worker`（用户级 `~/.codex/agents/card_worker.toml`，所有项目共用）；没装就派内置的 `worker` 角色，并提醒用户装一次（见第 0.2 节）；把第 3 步的 prompt 交给它。多张卡并行就一次派多个，等全部结果回来再验收 | 让 Codex 把问题清单发给同一个子代理线程（CLI 里用 `/subagents` 查看）；线程已关闭就新派一个，prompt 用第 3 步模板 + 问题清单 + 「在现有改动基础上修，不要推倒重来」 |
 | 没有子代理能力的工具 | 不派。在本会话里按卡片自己做，写完后**另起一轮**严格按第 4 步验收，汇报里注明「作者与验收未分离」 | 自己改，再验一轮 |
 
 - **验收一律由主会话做。**
+- 写卡子代理的约束全部在第 3 步的 prompt 里，所以没有自定义代理也能派；自定义代理只是多了固定的身份和可选的便宜模型。
 - 子代理不知道这段对话，只看得到它自己读到的文件。prompt 里不写「按刚才说的」，写清文件路径。
+
+## 0.2 Codex 写卡子代理（用户级，装一次）
+
+本技能目录下的 `codex/card_worker.toml` 是通用的 Codex 自定义代理定义，不含任何项目信息。装到用户级目录，所有项目共用：
+
+```bash
+mkdir -p ~/.codex/agents && cp <本技能目录>/codex/card_worker.toml ~/.codex/agents/
+```
+
+- 想让写卡用更便宜的模型：在 `~/.codex/agents/card_worker.toml` 里填 `model` 和 `model_reasoning_effort`。
+- 沙箱、审批、MCP 从主会话继承，代理文件改不了。
+- 不要把它放进项目的 `.codex/agents/`：项目差异只写在 `AGENTS.md` 的「任务配置」里。
 
 ## 1. 选卡
 
