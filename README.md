@@ -4,18 +4,18 @@
 
 | 技能 | 用途 | 触发说法 |
 |---|---|---|
-| `project-init` | 给项目生成 `AGENTS.md`（含「任务配置」）、`CLAUDE.md`、`docs/TASK.md` | 初始化项目 / 补任务配置 |
+| `project-init` | 给项目生成 `AGENTS.md`（含「任务配置」）、`CLAUDE.md`、`docs/TASK.md`、`.codex/agents/card_worker.toml` | 初始化项目 / 补任务配置 |
 | `task-breakdown` | 把需求拆成 `docs/tasks/` 下的任务卡和 `docs/TASK.md` 总表 | 拆卡 / 加一张卡 / 更新进度 |
 | `dispatch-task` | 把可开工的卡派给子代理写代码，主会话只验收、改状态、提交 | 派卡 / 做 t05 / 验收 t05 |
 
 ## 安装
 
 ```bash
-# 本机全局（所有项目、所有代理）
-npx skills add BiYuqi/agent-skills -g -a '*'
-
-# 装进某个项目（写入 .agents/skills/ 和 skills-lock.json，随仓库提交）
+# 在项目根目录安装（写入 .agents/skills/ 和 skills-lock.json，随仓库提交）
 npx skills add BiYuqi/agent-skills
+
+# 克隆了已装技能的项目后，按 skills-lock.json 恢复
+npx skills experimental_install
 
 # 更新
 npx skills update
@@ -25,16 +25,7 @@ npx skills update
 
 技能只写通用流程；项目差异全部放在项目根目录 `AGENTS.md` 的 `## 任务配置` 一节（卡号前缀、模块、检查命令、验收红线、提交策略……），技能运行时读取。新项目用 `project-init` 生成这一节，以后改流程参数只改项目里这一处。
 
-派卡时子代理怎么开取决于工具：Claude Code 用 Agent 工具（可指定模型），Codex 用子代理（通用的 `card_worker`，见下），都不支持时在同一会话里做完再单独验收。
-
-## Codex 写卡子代理（可选，用户级装一次）
-
-```bash
-mkdir -p ~/.codex/agents
-curl -fsSL https://raw.githubusercontent.com/BiYuqi/agent-skills/main/skills/dispatch-task/codex/card_worker.toml -o ~/.codex/agents/card_worker.toml
-```
-
-不装也能派卡（会用 Codex 内置的 `worker` 角色），装了可以在文件里给写卡指定更便宜的模型。
+派卡时子代理怎么开取决于工具：Claude Code 用 Agent 工具（可指定模型），Codex 用项目里的 `.codex/agents/card_worker.toml`（由 `project-init` 生成），都不支持时在同一会话里做完再单独验收。
 
 ## 许可证
 

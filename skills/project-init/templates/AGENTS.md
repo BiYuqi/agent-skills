@@ -27,7 +27,7 @@
 - 验收红线：
   - {{项目专属的「必须 / 不许」，每条一行，验收时逐条核对}}
 - 提交策略：{{`先问` 或 `直接提交`}}（推送一律要用户明确同意）
-- 写卡模型：`sonnet`（Claude Code 派卡用；Codex 的写卡模型在用户级 `~/.codex/agents/card_worker.toml` 里设）
+- 写卡模型：`sonnet`（Claude Code）；Codex 在 `.codex/agents/card_worker.toml` 里设
 
 <!-- 多项目仓库把「卡号前缀 / 总表 / 卡片目录 / 安装依赖 / 提交前检查」换成子项目表：
 | 前缀 | 子项目 | 总表 | 工作目录 | 安装依赖 | 提交前检查 |

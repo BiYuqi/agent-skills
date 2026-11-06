@@ -1,7 +1,5 @@
-# Codex 写卡子代理（dispatch-task 技能用）。通用，不含任何项目信息。
-# 装在用户级目录，所有项目共用一份：
-#   mkdir -p ~/.codex/agents && cp card_worker.toml ~/.codex/agents/
-# 想用更便宜的模型写代码，取消下面两行注释并填上模型名；不写就继承主会话的模型。
+# Codex 写卡子代理，由 dispatch-task 派出。项目规则不写在这里，写在 AGENTS.md。
+# 写卡要用别的模型时，取消下面两行注释并填上；不写就继承主会话的模型。
 # model = "<模型名>"
 # model_reasoning_effort = "medium"
 
